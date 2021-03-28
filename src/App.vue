@@ -18,5 +18,5 @@
 
 <style>
 	/*这里使用了配置过别名的路径进行引用*/
-	@import "/assets/css/base.css";
+	@import "assets/css/base.css";
 </style>
