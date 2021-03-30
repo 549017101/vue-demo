@@ -16,3 +16,17 @@ export function getHomeMultidata(){
     url: '/home/multidata'
   })
 }
+
+/**
+ * 获取首页展示的商品数据
+ * @param type 当前所选择的分类
+ * @param page 当前页码
+ */
+export function getHomeGoods(type,page){
+  return request({
+    url: '/home/data',
+    params: {
+      type,page
+    }
+  })
+}
