@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "better-scroll": "^2.2.1",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1"
@@ -23,7 +24,6 @@
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11"
   },
-
   "eslintConfig": {
     "root": true,
     "env": {
@@ -41,7 +41,6 @@
       "no-mixed-spaces-and-tabs": "off"
     }
   },
-
   "browserslist": [
     "> 1%",
     "last 2 versions",

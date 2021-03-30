@@ -1,11 +1,15 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners="banners"/>
-    <home-recommend-view :recommends="recommends"/>
-    <home-feature-view/>
-    <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"/>
-    <goods-list :goods="showGoods"/>
+
+    <scroll class="content">
+      <!--实现滚动必须要给这个滚动组件设置一个高度-->
+      <home-swiper :banners="banners"/>
+      <home-recommend-view :recommends="recommends"/>
+      <home-feature-view/>
+      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+      <goods-list :goods="showGoods"/>
+    </scroll>
   </div>
 </template>
 
@@ -17,6 +21,7 @@
   import HomeRecommendView from "@/views/home/childrenComponents/HomeRecommendView";
   import HomeFeatureView from "@/views/home/childrenComponents/HomeFeatureView";
   import GoodsList from "@/components/content/goods/GoodsList";
+  import Scroll from "@/components/common/scroll/Scroll";
 
   import {getHomeMultidata, getHomeGoods} from "@/network/HomeNetWork";
 
@@ -28,7 +33,8 @@
       HomeSwiper,
       HomeRecommendView,
       HomeFeatureView,
-      GoodsList
+      GoodsList,
+      Scroll
     },
     data(){
       return {
@@ -134,6 +140,8 @@
 <style scoped>
   #home {
     padding-top: 44px;
+    height: 100vh; /* vh: viewport height : 表示视窗高度*/
+    position: relative;
   }
 
   .home-nav {
@@ -151,5 +159,14 @@
     position: sticky;
     top: 44px;
     z-index: 9;
+  }
+
+  .content {
+    position: absolute;
+    overflow: hidden;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
   }
 </style>
