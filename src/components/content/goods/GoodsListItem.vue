@@ -6,7 +6,8 @@
 -->
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <!--在Vue中,可以使用 @load 来对图片的加载状态进行监听-->
+    <img :src="goodsItem.show.img" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -25,6 +26,16 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  methods: {
+    /**
+     * 监听图片的加载状态
+     */
+    imageLoad() {
+      //将这个事件交给事件总线进行管理(这里是发射给了Home组件),使用$emit方法
+      //这样就能在Home组件创建完成时调用,就可以实时监听图片的加载状态
+      this.$bus.$emit('itemImageLoad')
     }
   }
 };

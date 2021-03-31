@@ -61,16 +61,20 @@
       });
 
       //2.监听滚动位置
-      this.scroll.on('scroll',(position) => {
-        //position就是当前滚动的坐标
-        //这里的position只是当前组件中的,外部想要使用的话,需要使用$emit将它作为自定义事件发射出去
-        this.$emit('scroll',position)
-      });
+      if (this.probeType === 2 || this.probeType === 3){
+        this.scroll.on('scroll',(position) => {
+          //position就是当前滚动的坐标
+          //这里的position只是当前组件中的,外部想要使用的话,需要使用$emit将它作为自定义事件发射出去
+          this.$emit('scroll',position)
+        })
+      }
 
       //3.监听上拉事件(上拉加载更多)
-      this.scroll.on('pullingUp',() => {
-        this.$emit('pullingUp')
-      });
+      if (this.pullUpLoad){
+        this.scroll.on('pullingUp',() => {
+          this.$emit('pullingUp')
+        })
+      }
     },
     methods: {
       /**
@@ -82,7 +86,18 @@
       scrollTo(x, y, time = 1000){
         //time = 1000 这种参数的形式是es6的语法,表示这个参数如果不传值,就用默认值 1000
         //这个方法对scrollTo()方法的调用进行了封装,便于外部调用
-        this.scroll.scrollTo(x,y,time);
+        this.scroll && this.scroll.scrollTo(x,y,time);
+      },
+
+      /**
+       * 当图片加载完成后进行刷新<br/>
+       * <pre>
+       * 该方法可以解决滑动时由于图片高度所产生的无法滑动bug
+       * 原理就是调用better-scroll原生的refresh()方法
+       * 这里只是进行了封装,方便外部组件进行调用</pre>
+       */
+      refresh(){
+        this.scroll && this.scroll.refresh()
       },
 
       /**
@@ -90,8 +105,9 @@
        * 用于告诉 better-scroll 数据已加载,这样才能继续加载数据,否则只能加载一次
        */
       finishPullUp(){
+        //下拉加载更多时,better-scroll默认只加载一次,需要调用此方法才能继续加载
         //这个方法是对better-scroll原生的finishPullUp()方法的封装,便于外部组件调用
-        this.scroll.finishPullUp()
+        this.scroll && this.scroll.finishPullUp()
       }
     }
   };

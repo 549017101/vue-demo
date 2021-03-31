@@ -2,8 +2,8 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 
-    <scroll class="content" ref="scroll" @scroll="contentScroll" @pullingUp="loadMore"
-            :probe-type="3" :pull-up-load="true">
+    <scroll class="content" ref="scroll" @scroll="contentScroll"
+            :probe-type="3" :pull-up-load="true" @pullingUp="loadMore">
       <!--实现滚动必须要给这个滚动组件设置一个高度-->
       <home-swiper :banners="banners"/>
       <home-recommend-view :recommends="recommends"/>
@@ -32,6 +32,7 @@
   import BackTop from "@/components/content/backTop/BackTop";
 
   import {getHomeMultidata, getHomeGoods} from "@/network/HomeNetWork";
+  import {debounce} from "@/common/utils";
 
   export default {
     name: "Home",
@@ -83,12 +84,36 @@
     },
     created() {
       //1.请求多个数据
-      this.getHomeMultidata()
+      this.getHomeMultidata();
 
       //2.请求商品数据,获取三种不同分类的数据
-      this.getHomeGoods('pop')
-      this.getHomeGoods('new')
-      this.getHomeGoods('sell')
+      this.getHomeGoods('pop');
+      this.getHomeGoods('new');
+      this.getHomeGoods('sell');
+    },
+    mounted() {
+
+      const debounceRefresh = debounce(this.$refs.scroll.refresh,100)
+
+      //3.监听商品详情的item中图片的加载状态
+      //使用$bus(事件总线)的 $on 监听图片加载完成后发射的事件
+      this.$bus.$on('itemImageLoad',() => {
+        // 初次加载时,高度是确定的,所以better-scroll可以滚动的高度也是确定的
+        // 但由于商品详情中的图片加载是异步的,所以在组件创建好了以后可能图片还没有请求到
+        // 此时高度已经是确定的了,若此时图片加载完毕,由于图片的存在,滚动区域的高度就会改变
+        // 但是初次加载时better-scroll记录的高度是要小于此时有图片的高度的,所以就会出现无法继续往下滚动的bug
+        // 解决方式就是使用 $bus(事件总线),事件总线类似于Vuex,它起到一个沟通桥梁的作用
+        // 就像是所有组件共用相同的事件中心，可以向该中心注册发送事件或接收事件，所以组件都可以上下平行地通知其他组件
+        // vue中直接使用$bus是undefined,需要在main.js中使用vue的原型为其赋值
+        // Vue.prototype.$bus = new Vue(),  Vue实例也是可以作为事件总线使用的
+
+        //this.$refs.scroll.refresh() //一定要在mounted中监听,这样才能保证$refs.scroll是有值的
+
+        //直接使用refresh()会导致调用过于频繁,所以使用防抖函数进行封装
+        //防抖函数会返回一个新的函数,之后在调用非常频繁的时候,就使用新生成的函数
+        //这个新函数并不会频繁调用,若下一次执行来的很快,则就会将上一次执行取消掉,这两次就一起执行
+        debounceRefresh() //这里调用的是使用防抖函数处理之后的函数
+      });
     },
     computed: {
       /**
@@ -111,7 +136,7 @@
       },
 
       /**
-       * 获取首页展示的商品数据
+       * 根据不同的分类获取首页展示的商品数据
        * @param type 当前所属的分类
        */
       getHomeGoods(type){
@@ -123,8 +148,10 @@
           this.goods[type].list.push(...res.data.list);
 
           this.goods[type].page += 1; //页码 +1
-          this.$refs.scroll.finishPullUp(); //使用上拉加载更多时,必须要调用这个方法,否则只能获取一次数据
-        });
+
+          //使用上拉加载更多时,必须要调用这个方法,否则只能获取一次数据
+          this.$refs.scroll.finishPullUp();
+        })
       },
 
       /**
