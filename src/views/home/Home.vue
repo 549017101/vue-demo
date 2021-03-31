@@ -2,7 +2,8 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 
-    <scroll class="content">
+    <scroll class="content" ref="scroll" @scroll="contentScroll" @pullingUp="loadMore"
+            :probe-type="3" :pull-up-load="true">
       <!--实现滚动必须要给这个滚动组件设置一个高度-->
       <home-swiper :banners="banners"/>
       <home-recommend-view :recommends="recommends"/>
@@ -10,6 +11,12 @@
       <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"/>
       <goods-list :goods="showGoods"/>
     </scroll>
+
+    <!--
+      组件是不能直接监听点击事件的,需要使用 @click.native
+      当需要监听一个组件的原生事件时,必须要给对应的事件加上 .native 修饰符,才能进行监听
+    -->
+    <back-top @click.native="backTopClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -22,6 +29,7 @@
   import HomeFeatureView from "@/views/home/childrenComponents/HomeFeatureView";
   import GoodsList from "@/components/content/goods/GoodsList";
   import Scroll from "@/components/common/scroll/Scroll";
+  import BackTop from "@/components/content/backTop/BackTop";
 
   import {getHomeMultidata, getHomeGoods} from "@/network/HomeNetWork";
 
@@ -34,7 +42,8 @@
       HomeRecommendView,
       HomeFeatureView,
       GoodsList,
-      Scroll
+      Scroll,
+      BackTop
     },
     data(){
       return {
@@ -67,7 +76,9 @@
         },
 
         /**当前所属的类型, 默认为: 流行*/
-        currentType : 'pop'
+        currentType : 'pop',
+        /**是否显示回到顶部的按钮,默认不显示*/
+        isShowBackTop: false
       }
     },
     created() {
@@ -94,11 +105,11 @@
        */
       getHomeMultidata(){
         getHomeMultidata().then(res => {
-          console.log(res);
           this.banners = res.data.data.banner.list
           this.recommends = res.data.data.recommend.list
         })
       },
+
       /**
        * 获取首页展示的商品数据
        * @param type 当前所属的分类
@@ -112,7 +123,17 @@
           this.goods[type].list.push(...res.data.list);
 
           this.goods[type].page += 1; //页码 +1
+          this.$refs.scroll.finishPullUp(); //使用上拉加载更多时,必须要调用这个方法,否则只能获取一次数据
         });
+      },
+
+      /**
+       * 针对选中的类型加载更多数据(上拉加载更多)
+       */
+      loadMore(){
+        this.getHomeGoods(this.currentType)
+        //这里需要手动进行刷新,否则会出现无法下拉的bug,这是由于高度计算产生的问题
+        this.$refs.scroll.scroll.refresh()
       },
 
       /**
@@ -132,6 +153,22 @@
             this.currentType = 'sell';
             break;
         }
+      },
+
+      /**
+       * 回到顶部按钮的点击事件
+       */
+      backTopClick(){
+        //scrollTo()是 betterScroll中的一个方法,前两个参数表示要返回到的坐标,第三个参数是在多少毫秒内完成
+        this.$refs.scroll.scrollTo(0,0,1500)
+      },
+
+      /**
+       * 监听内容发生滚动时的事件
+       */
+      contentScroll(position){
+        //position是坐标,坐标在浏览器中都是负值
+        this.isShowBackTop = (-position.y) > 500
       }
     }
   }
@@ -145,7 +182,8 @@
   }
 
   .home-nav {
-    background-color: var(--color-tint);
+    /*background-color: var(--color-tint);*/
+    background-color: #FF8C00;
     color: #fff;
 
     position: fixed;
