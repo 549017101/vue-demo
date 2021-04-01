@@ -1,14 +1,17 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control class="tab-control" :titles="['流行','新款','精选']"
+                 @tabClick="tabClick" ref="tabControlTop" v-show="isTabControlFixed"/>
 
     <scroll class="content" ref="scroll" @scroll="contentScroll"
             :probe-type="3" :pull-up-load="true" @pullingUp="loadMore">
       <!--实现滚动必须要给这个滚动组件设置一个高度-->
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" @swiperImagerLoad="swiperImagerLoad"/>
       <home-recommend-view :recommends="recommends"/>
       <home-feature-view/>
-      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+      <tab-control :titles="['流行','新款','精选']"
+                   @tabClick="tabClick" ref="tabControl"/>
       <goods-list :goods="showGoods"/>
     </scroll>
 
@@ -79,7 +82,11 @@
         /**当前所属的类型, 默认为: 流行*/
         currentType : 'pop',
         /**是否显示回到顶部的按钮,默认不显示*/
-        isShowBackTop: false
+        isShowBackTop: false,
+        /** tabControl 的偏移量,用于其吸顶效果*/
+        tabOffsetTop: 0,
+        /**tabControl 是否需要吸顶效果,默认为false*/
+        isTabControlFixed: false
       }
     },
     created() {
@@ -95,7 +102,7 @@
 
       const debounceRefresh = debounce(this.$refs.scroll.refresh,100)
 
-      //3.监听商品详情的item中图片的加载状态
+      //1.监听商品详情的item中图片的加载状态
       //使用$bus(事件总线)的 $on 监听图片加载完成后发射的事件
       this.$bus.$on('itemImageLoad',() => {
         // 初次加载时,高度是确定的,所以better-scroll可以滚动的高度也是确定的
@@ -114,6 +121,13 @@
         //这个新函数并不会频繁调用,若下一次执行来的很快,则就会将上一次执行取消掉,这两次就一起执行
         debounceRefresh() //这里调用的是使用防抖函数处理之后的函数
       });
+
+      //2.获取tabControl的offsetTop
+      //所有的组件中都有一个属性 $el,这个属性使用来获取组件中的元素的
+      //直接this.$refs.tabControl 这样使用,获取到的是组件,组件是没有offsetTop属性的,这是元素的属性
+      //但是直接 this.$refs.tabControl.$el.offsetTop 这样获取也是不对的,这样获取到的是图片还未加载时的高度
+      //获取正确值的方法: 在HomeSwiper中监听img的加载是否完成,加载完后,发出事件,再获取正确的OffsetTop
+      //this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
     computed: {
       /**
@@ -180,6 +194,10 @@
             this.currentType = 'sell';
             break;
         }
+
+        //将两个tabControl的点击状态保持一致
+        this.$refs.tabControlTop.currentIndex = index
+        this.$refs.tabControl.currentIndex = index
       },
 
       /**
@@ -194,8 +212,21 @@
        * 监听内容发生滚动时的事件
        */
       contentScroll(position){
+        //1.判断BackTop是否显示
         //position是坐标,坐标在浏览器中都是负值
         this.isShowBackTop = (-position.y) > 500
+
+        //2.决定tabControl是否吸顶(是否给他一个属性 position:fixed)
+        this.isTabControlFixed = (-position.y) > this.tabOffsetTop
+        //之后再根据 isTabControlFixed 这个属性动态绑定class定义样式即可
+      },
+
+      /**
+       * 监听轮播图是否加载完成<br/>
+       * 用于TabControl的吸顶效果
+       */
+      swiperImagerLoad() {
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
       }
     }
   }
@@ -220,12 +251,6 @@
     z-index: 9;
   }
 
-  .tab-control {
-    position: sticky;
-    top: 44px;
-    z-index: 9;
-  }
-
   .content {
     position: absolute;
     overflow: hidden;
@@ -233,5 +258,10 @@
     bottom: 49px;
     left: 0;
     right: 0;
+  }
+
+  .tab-control {
+    position: relative;
+    z-index: 9;
   }
 </style>
