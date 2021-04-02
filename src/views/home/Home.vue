@@ -86,7 +86,9 @@
         /** tabControl 的偏移量,用于其吸顶效果*/
         tabOffsetTop: 0,
         /**tabControl 是否需要吸顶效果,默认为false*/
-        isTabControlFixed: false
+        isTabControlFixed: false,
+        /**记录离开当前页面时此刻所处的位置, 默认为0*/
+        saveY: 0
       }
     },
     created() {
@@ -100,7 +102,7 @@
     },
     mounted() {
 
-      const debounceRefresh = debounce(this.$refs.scroll.refresh,100)
+      const debounceRefresh = debounce(this.$refs.scroll.refreshScroll,100)
 
       //1.监听商品详情的item中图片的加载状态
       //使用$bus(事件总线)的 $on 监听图片加载完成后发射的事件
@@ -128,6 +130,18 @@
       //但是直接 this.$refs.tabControl.$el.offsetTop 这样获取也是不对的,这样获取到的是图片还未加载时的高度
       //获取正确值的方法: 在HomeSwiper中监听img的加载是否完成,加载完后,发出事件,再获取正确的OffsetTop
       //this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+    },
+    activated() {
+      //进入组件时执行
+
+      //要想实现切换页面前后还保留原来的位置和状态等信息,就要设置一个浏览位置
+      //切换时保存当前的浏览位置,切换回来的时候再将页面跳到所保存的位置即可
+      this.$refs.scroll.scrollToPage(0, this.saveY, 0)
+      this.$refs.scroll.refreshScroll()
+    },
+    deactivated() {
+      //离开组件时执行
+      this.saveY = this.$refs.scroll.getScrollPosition();
     },
     computed: {
       /**
@@ -174,7 +188,7 @@
       loadMore(){
         this.getHomeGoods(this.currentType)
         //这里需要手动进行刷新,否则会出现无法下拉的bug,这是由于高度计算产生的问题
-        this.$refs.scroll.scroll.refresh()
+        this.$refs.scroll.refreshScroll()
       },
 
       /**
@@ -204,8 +218,8 @@
        * 回到顶部按钮的点击事件
        */
       backTopClick(){
-        //scrollTo()是 betterScroll中的一个方法,前两个参数表示要返回到的坐标,第三个参数是在多少毫秒内完成
-        this.$refs.scroll.scrollTo(0,0,1500)
+        //scrollToPage()是 betterScroll中的一个方法,前两个参数表示要返回到的坐标,第三个参数是在多少毫秒内完成
+        this.$refs.scroll.scrollToPage(0,0,1500)
       },
 
       /**

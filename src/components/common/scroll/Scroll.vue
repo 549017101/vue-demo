@@ -83,20 +83,20 @@
        * @param y 纵坐标
        * @param time 在指定时间内(毫秒)完成滚动,默认值为1000
        */
-      scrollTo(x, y, time = 1000){
+      scrollToPage(x, y, time = 1000){
         //time = 1000 这种参数的形式是es6的语法,表示这个参数如果不传值,就用默认值 1000
         //这个方法对scrollTo()方法的调用进行了封装,便于外部调用
         this.scroll && this.scroll.scrollTo(x,y,time);
       },
 
       /**
-       * 当图片加载完成后进行刷新<br/>
+       * 当图片加载完成后进行刷新组件<br/>
        * <pre>
        * 该方法可以解决滑动时由于图片高度所产生的无法滑动bug
        * 原理就是调用better-scroll原生的refresh()方法
        * 这里只是进行了封装,方便外部组件进行调用</pre>
        */
-      refresh(){
+      refreshScroll(){
         this.scroll && this.scroll.refresh()
       },
 
@@ -108,6 +108,14 @@
         //下拉加载更多时,better-scroll默认只加载一次,需要调用此方法才能继续加载
         //这个方法是对better-scroll原生的finishPullUp()方法的封装,便于外部组件调用
         this.scroll && this.scroll.finishPullUp()
+      },
+
+      /**
+       * 获取当前所处位置的纵坐标
+       * @returns {*|number}
+       */
+      getScrollPosition(){
+        return this.scroll ? this.scroll.y :0
       }
     }
   };
