@@ -5,7 +5,7 @@
   2021-03-30 15:32
 -->
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!--在Vue中,可以使用 @load 来对图片的加载状态进行监听-->
     <img :src="goodsItem.show.img" @load="imageLoad">
     <div class="goods-info">
@@ -36,6 +36,14 @@ export default {
       //将这个事件交给事件总线进行管理(这里是发射给了Home组件),使用$emit方法
       //这样就能在Home组件创建完成时调用,就可以实时监听图片的加载状态
       this.$bus.$emit('itemImageLoad')
+    },
+
+    /**
+     * 商品详情的点击事件(跳转到商品详情)
+     */
+    itemClick(){
+      //这里最好用push()方法,便于返回上一页
+      this.$router.push('/detail/' + this.goodsItem.iid) //这里使用了动态路由,将所点击的商品的id传过来
     }
   }
 };

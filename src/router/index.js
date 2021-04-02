@@ -11,6 +11,7 @@ const Home = () => import('../views/home/Home')
 const Category = () => import('../views/category/Category')
 const Cart = () => import('../views/cart/Cart')
 const Profile = () => import('../views/profile/Profile')
+const Detail = () => import('../views/detail/Detail')
 
 //1.安装插件
 Vue.use(VueRouter)
@@ -47,6 +48,13 @@ const routes = [
     component: Profile,
     meta:{
       title:'档案'
+    }
+  },
+  {
+    path: "/detail/:iid",
+    component: Detail,
+    meta:{
+      title:'商品详情'
     }
   }
 ]
