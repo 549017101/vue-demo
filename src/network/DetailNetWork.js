@@ -21,6 +21,15 @@ export function getDetailData(iid) {
 }
 
 /**
+ * 获取详情页底部的推荐数据
+ */
+export function getRecommend(){
+  return request({
+    url: '/recommend'
+  })
+}
+
+/**
  * 商品详情的基本信息,如价格,销量等
  */
 export class Goods {

@@ -88,7 +88,9 @@
         /**tabControl 是否需要吸顶效果,默认为false*/
         isTabControlFixed: false,
         /**记录离开当前页面时此刻所处的位置, 默认为0*/
-        saveY: 0
+        saveY: 0,
+        /**用于监听图片是否加载的回调函数*/
+        itemImgListener: null
       }
     },
     created() {
@@ -106,7 +108,13 @@
 
       //1.监听商品详情的item中图片的加载状态
       //使用$bus(事件总线)的 $on 监听图片加载完成后发射的事件
-      this.$bus.$on('itemImageLoad',() => {
+
+      //对监听的事件进行保存
+      this.itemImgListener = ()=>{
+        debounceRefresh() //这里调用的是使用防抖函数处理之后的函数
+      }
+
+      this.$bus.$on('itemImageLoad',this.itemImgListener
         // 初次加载时,高度是确定的,所以better-scroll可以滚动的高度也是确定的
         // 但由于商品详情中的图片加载是异步的,所以在组件创建好了以后可能图片还没有请求到
         // 此时高度已经是确定的了,若此时图片加载完毕,由于图片的存在,滚动区域的高度就会改变
@@ -121,8 +129,7 @@
         //直接使用refresh()会导致调用过于频繁,所以使用防抖函数进行封装
         //防抖函数会返回一个新的函数,之后在调用非常频繁的时候,就使用新生成的函数
         //这个新函数并不会频繁调用,若下一次执行来的很快,则就会将上一次执行取消掉,这两次就一起执行
-        debounceRefresh() //这里调用的是使用防抖函数处理之后的函数
-      });
+      );
 
       //2.获取tabControl的offsetTop
       //所有的组件中都有一个属性 $el,这个属性使用来获取组件中的元素的
@@ -132,6 +139,8 @@
       //this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
     activated() {
+      //deactivated() activated() 这两个是在使用了keep-alive才会调用的
+
       //进入组件时执行
 
       //要想实现切换页面前后还保留原来的位置和状态等信息,就要设置一个浏览位置
@@ -141,7 +150,10 @@
     },
     deactivated() {
       //离开组件时执行
-      this.saveY = this.$refs.scroll.getScrollPosition();
+      this.saveY = this.$refs.scroll.getScrollPosition(); //保存纵坐标的值
+
+      //取消全局事件的监听,第二个参数需要传入一个函数,否则全局所有用到这个事件的地方都会被取消
+      this.$bus.$off('itemImageLoad',this.itemImgListener)
     },
     computed: {
       /**

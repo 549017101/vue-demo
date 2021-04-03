@@ -7,7 +7,7 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!--在Vue中,可以使用 @load 来对图片的加载状态进行监听-->
-    <img :src="goodsItem.show.img" @load="imageLoad">
+    <img :src="showImgae" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -26,6 +26,14 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  computed: {
+    /**
+     * 根据不同应用场景决定展示图片的数据
+     */
+    showImgae(){
+      return this.goodsItem.image || this.goodsItem.show.img
     }
   },
   methods: {

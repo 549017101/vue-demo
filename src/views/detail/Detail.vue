@@ -13,6 +13,8 @@
       <detail-shop-info :shop="shop"/>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
       <detail-param-info :param-info="paramInfo"/>
+      <detail-comment-info :comment-info="commentInfo"/>
+      <goods-list :goods="recommends"/>
     </scroll>
   </div>
 </template>
@@ -24,10 +26,13 @@
   import DetailShopInfo from "@/views/detail/childrenComponents/DetailShopInfo";
   import DetailGoodsInfo from "@/views/detail/childrenComponents/DetailGoodsInfo";
   import DetailParamInfo from "@/views/detail/childrenComponents/DetailParamInfo";
+  import DetailCommentInfo from "@/views/detail/childrenComponents/DetailCommentInfo";
 
+  import GoodsList from "@/components/content/goods/GoodsList";
   import Scroll from "@/components/common/scroll/Scroll";
 
-  import {getDetailData, Goods, Shop, GoodsParam} from "@/network/DetailNetWork";
+  import {getDetailData, getRecommend, Goods, Shop, GoodsParam} from "@/network/DetailNetWork";
+  import {itemListenerMixin} from "@/common/mixin";
 
   export default {
     name: "Detail",
@@ -38,8 +43,11 @@
       DetailShopInfo,
       DetailGoodsInfo,
       DetailParamInfo,
+      DetailCommentInfo,
+      GoodsList,
       Scroll
     },
+    mixins: [itemListenerMixin],
     data(){
       return {
         /**商品id*/
@@ -53,7 +61,11 @@
         /**商品详情数据(下拉显示的详情数据)*/
         detailInfo: {},
         /**商品参数信息*/
-        paramInfo: {}
+        paramInfo: {},
+        /**评论信息*/
+        commentInfo: {},
+        /**推荐数据*/
+        recommends: [],
       }
     },
     created() {
@@ -78,7 +90,25 @@
 
         //获取商品参数信息
         this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+
+        //获取评论信息
+        if (data.rate.cRate !==0){
+          //只取一条数据
+          this.commentInfo = data.rate.list[0]
+        }
       })
+
+      //3.请求推荐数据
+      getRecommend().then(res => {
+        this.recommends = res.data.data.list
+      })
+    },
+    mounted() {
+      //这里使用了混入
+    },
+    destroyed() {
+      //Detail组件被排除在了keep-alive之外(App.vue),所以 destroyed() 肯定会被调用
+      this.$bus.$off('itemImgLoad',this.itemImgListener) //离开组件时取消事件
     },
     methods: {
       /**
