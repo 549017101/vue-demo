@@ -59,16 +59,16 @@ const routes = [
   }
 ]
 
+// //解决路由重复问题(具体表现为 多次点击底部菜单就会报错,但不影响使用)
+// const originalPush = VueRouter.prototype.push;
+// VueRouter.prototype.push = function push(location) {
+//   return originalPush.call(this, location).catch(err => err)
+// }
+
 const router = new VueRouter({
   routes,
   mode: 'history'
 })
-
-//解决路由重复问题(具体表现为 多次点击底部菜单就会报错,但不影响使用)
-const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
-}
 
 export default router
 

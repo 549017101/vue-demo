@@ -7,8 +7,8 @@
 <template>
   <div>
     <nav-bar>
-      <div slot="left" class="back" @click="backClick">
-        <img src="~assets/img/common/back.svg" alt="">
+      <div slot="left" class="back"  @click="backClick">
+        <img src="~assets/img/common/back.svg">
       </div>
       <div slot="center" class="barTitles">
         <div class="barTitles-item" :class="{active : index === currentIndex}"
@@ -48,7 +48,7 @@
        * 返回上一页按钮的点击事件
        */
       backClick(){
-        this.$router.go(-1)
+        this.$router.back()
       }
     }
   }

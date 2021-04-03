@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-    <keep-alive>
+    <keep-alive exclude="Detail">
       <!--keep-alive 是Vue提供的一个抽象组件,用来对组件进行缓存,从而节省性能-->
       <!--需要记录用户当前浏览的位置和状态,在切换到别的页面后,再切换回来,需要回到原来的状态和位置,这就需要用keep-alive对组件缓存-->
       <router-view/>

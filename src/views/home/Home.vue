@@ -136,7 +136,7 @@
 
       //要想实现切换页面前后还保留原来的位置和状态等信息,就要设置一个浏览位置
       //切换时保存当前的浏览位置,切换回来的时候再将页面跳到所保存的位置即可
-      this.$refs.scroll.scrollToPage(0, this.saveY, 0)
+      this.$refs.scroll.scrollToPage(0, this.saveY, 1)
       this.$refs.scroll.refreshScroll()
     },
     deactivated() {
