@@ -8,9 +8,9 @@
 /**
  * 防抖函数,用于解决refresh()的频繁调用
  * @param func 传入需要执行防抖的函数
- * @param delay 延迟时间
+ * @param delay 延迟时间,默认为100ms
  */
-export function debounce(func, delay){
+export function debounce(func, delay=100){
   let timer = null
   return function (...args){
     if(timer) {
