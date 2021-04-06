@@ -7,6 +7,7 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"/>
+
     <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3">
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"/>
@@ -16,6 +17,8 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
+
+    <detail-bottom-bar/>
   </div>
 </template>
 
@@ -27,6 +30,7 @@
   import DetailGoodsInfo from "@/views/detail/childrenComponents/DetailGoodsInfo";
   import DetailParamInfo from "@/views/detail/childrenComponents/DetailParamInfo";
   import DetailCommentInfo from "@/views/detail/childrenComponents/DetailCommentInfo";
+  import DetailBottomBar from "@/views/detail/childrenComponents/DetailBottomBar";
 
   import GoodsList from "@/components/content/goods/GoodsList";
   import Scroll from "@/components/common/scroll/Scroll";
@@ -45,6 +49,7 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      DetailBottomBar,
       GoodsList,
       Scroll
     },
@@ -195,7 +200,7 @@
   .content {
     /*若想使用better-scroll实现滚动,必须要给滚动组件一个固定高度*/
     /*这里的 100% 是相对于父元素的,所以必须要给父元素(#detail)也设置一个固定的高度*/
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 49px);
   }
 
   .detail-nav {
