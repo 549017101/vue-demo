@@ -19,6 +19,7 @@
     </scroll>
 
     <detail-bottom-bar/>
+    <back-top @click.native="backTopClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -36,8 +37,9 @@
   import Scroll from "@/components/common/scroll/Scroll";
 
   import {getDetailData, getRecommend, Goods, Shop, GoodsParam} from "@/network/DetailNetWork";
-  import {itemListenerMixin} from "@/common/mixin";
+  import {itemListenerMixin,backTopMixin} from "@/common/mixin";
   import {debounce} from "@/common/utils";
+  import {BACKTOP_DISTANCE} from "@/common/const";
 
   export default {
     name: "Detail",
@@ -53,7 +55,7 @@
       GoodsList,
       Scroll
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin,backTopMixin],
     data(){
       return {
         /**商品id*/
@@ -141,7 +143,7 @@
       },100)
     },
     mounted() {
-      //这里使用了混入
+      //这里使用了混入,但是 methods 里面的内容不能使用混入,否则会被覆盖,生命周期才能用混入
     },
     destroyed() {
       //Detail组件被排除在了keep-alive之外(App.vue),所以 destroyed() 肯定会被调用
@@ -172,6 +174,9 @@
        */
       contentScroll(position){
         //该方法在使用的时候需要传入一个probe-type,否则无法监听滚动
+
+        //判断BackTop是否显示
+        this.isShowBackTop = (-position.y) > BACKTOP_DISTANCE
 
         //获取Y值
         const positionY = -position.y

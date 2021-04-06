@@ -6,6 +6,7 @@
  */
 
 import {debounce} from "@/common/utils";
+import BackTop from "@/components/content/backTop/BackTop";
 
 /**
  * item的混入
@@ -26,5 +27,28 @@ export const itemListenerMixin = {
     }
 
     this.$bus.$on('itemImgLoad',this.itemImgListener)
+  }
+}
+
+/**
+ * 回到顶部按钮的混入
+ */
+export const backTopMixin = {
+  components:{
+    BackTop
+  },
+  data() {
+    return {
+      isShowBackTop: false
+    }
+  },
+  methods: {
+    /**
+     * 回到顶部按钮的点击事件
+     */
+    backTopClick(){
+      //scrollToPage()是 betterScroll中的一个方法,前两个参数表示要返回到的坐标,第三个参数是在多少毫秒内完成
+      this.$refs.scroll.scrollToPage(0,0,1500)
+    }
   }
 }

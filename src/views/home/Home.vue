@@ -36,6 +36,7 @@
 
   import {getHomeMultidata, getHomeGoods} from "@/network/HomeNetWork";
   import {debounce} from "@/common/utils";
+  import {NEW, POP, SELL, BACKTOP_DISTANCE} from "@/common/const";
 
   export default {
     name: "Home",
@@ -98,9 +99,9 @@
       this.getHomeMultidata();
 
       //2.请求商品数据,获取三种不同分类的数据
-      this.getHomeGoods('pop');
-      this.getHomeGoods('new');
-      this.getHomeGoods('sell');
+      this.getHomeGoods(POP);
+      this.getHomeGoods(NEW);
+      this.getHomeGoods(SELL);
     },
     mounted() {
 
@@ -240,7 +241,7 @@
       contentScroll(position){
         //1.判断BackTop是否显示
         //position是坐标,坐标在浏览器中都是负值
-        this.isShowBackTop = (-position.y) > 500
+        this.isShowBackTop = (-position.y) > BACKTOP_DISTANCE
 
         //2.决定tabControl是否吸顶(是否给他一个属性 position:fixed)
         this.isTabControlFixed = (-position.y) > this.tabOffsetTop
