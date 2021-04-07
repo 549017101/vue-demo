@@ -20,6 +20,7 @@ export default {
    * 添加到购物车
    */
   [ADD_TO_CART](state, payload) {
+    payload.checked = true //当购物车添加新商品时,选中状态为true
     state.cartList.push(payload);
   }
 };
