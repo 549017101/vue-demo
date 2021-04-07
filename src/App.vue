@@ -23,4 +23,9 @@
 <style>
 	/*这里使用了配置过别名的路径进行引用*/
 	@import "assets/css/base.css";
+
+  * {
+    /*使用fastclick时,需要用这个属性,否则谷歌浏览器会报错*/
+    touch-action: none;
+  }
 </style>

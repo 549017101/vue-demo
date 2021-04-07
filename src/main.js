@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from "./router";
 import store from "@/store";
 import toast from "@/components/common/toast" //使用了默认导出,可以自定义导入的对象名
+import FastClick from 'fastclick'
 
 Vue.config.productionTip = false
 
@@ -12,6 +13,9 @@ Vue.prototype.$bus = new Vue()
 
 //安装toast插件
 Vue.use(toast)
+
+//解决移动端300ms延迟
+FastClick.attach(document.body)
 
 new Vue({
   render: h => h(App),
