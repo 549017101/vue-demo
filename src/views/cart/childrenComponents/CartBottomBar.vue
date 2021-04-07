@@ -7,7 +7,7 @@
 <template>
   <div class="bottom-bar">
     <div class="check-content">
-      <check-button class="check-button"/>
+      <check-button class="check-button" :is-checked="isSelectAll" @click.native="checkClick"/>
       <span>全选</span>
     </div>
 
@@ -48,6 +48,31 @@
        */
       checkLength() {
         return this.cartList.filter(item => item.checked).length
+      },
+      /**
+       * 是否全部选中
+       */
+      isSelectAll(){
+        if (this.cartList.length === 0){
+          //购物车没有数据的时候,默认不选中
+          return false
+        }
+        //find()方法只查找第一条符合条件的数据,不会往后遍历,节省性能
+        return !this.cartList.find(item => !item.checked)
+      }
+    },
+    methods: {
+      /**
+       * 全选按钮的点击事件
+       */
+      checkClick(){
+        if (this.isSelectAll){
+          //全部选中状态下,点击按钮,将所有选择状态置为false
+          this.cartList.forEach(item => item.checked = false)
+        }else{
+          //部分或全部不选中
+          this.cartList.forEach(item => item.checked = true)
+        }
       }
     }
   }
