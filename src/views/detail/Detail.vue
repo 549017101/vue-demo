@@ -40,6 +40,8 @@
   import {debounce} from "@/common/utils";
   import {BACKTOP_DISTANCE} from "@/common/const";
 
+  import {mapActions} from 'vuex'
+
   export default {
     name: "Detail",
     components: {
@@ -149,6 +151,8 @@
       this.$bus.$off('itemImgLoad',this.itemImgListener) //离开组件时取消事件
     },
     methods: {
+      ...mapActions(['addCart']),
+
       /**
        * 监听图片加载是否完成
        */
@@ -203,7 +207,22 @@
         product.price = this.goods.realPrice
 
         //将商品添加到购物车
-        this.$store.dispatch('addCart',product)
+        //dispatch可以返回一个Promise
+        // this.$store.dispatch('addCart',product).then(res => {
+        //   console.log(res);
+        //   this.show = true
+        //   this.message = res
+        //
+        //   setTimeout(() => {
+        //     this.show = false
+        //     this.message = ''
+        //   },1500)
+        // })
+
+        this.addCart(product).then(res => {
+          //这段代码和上面的一样,只不过是使用了 vuex提供的mapActions辅助函数进行了映射
+          this.$toast.toastShow(res,1500)
+        })
       }
     }
   }
