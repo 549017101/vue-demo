@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from "./router";
 import store from "@/store";
 import toast from "@/components/common/toast" //使用了默认导出,可以自定义导入的对象名
-import FastClick from 'fastclick'
+import FastClick from 'fastclick'  //解决移动端300ms延迟
+import VueLazyload from "vue-lazyload"; //图片懒加载
 
 Vue.config.productionTip = false
 
@@ -16,6 +17,13 @@ Vue.use(toast)
 
 //解决移动端300ms延迟
 FastClick.attach(document.body)
+
+//使用懒加载插件
+Vue.use(VueLazyload,{
+  preLoad: 1,
+  /**占位图片*/
+  loading: require('assets/img/common/placeholder.png')
+})
 
 new Vue({
   render: h => h(App),

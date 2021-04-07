@@ -7,7 +7,9 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!--在Vue中,可以使用 @load 来对图片的加载状态进行监听-->
-    <img :src="showImgae" @load="imageLoad">
+    <!--<img :src="showImgae" @load="imageLoad">-->
+    <!--使用图片懒加载框架-->
+    <img v-lazy="showImgae" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
