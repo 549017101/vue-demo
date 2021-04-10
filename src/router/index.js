@@ -26,7 +26,11 @@ VueRouter.prototype.push = function push(location) {
 const routes = [
   {
     path: "/",
-    redirect: "/home"
+    //redirect: "/home"
+    component: Home,
+    meta:{
+      title:'首页'
+    }
   },
   {
     path: "/home",
