@@ -53,7 +53,7 @@ const routes = [
     path: "/profile",
     component: Profile,
     meta:{
-      title:'档案'
+      title:'我的商城'
     }
   },
   {

@@ -20,7 +20,7 @@
     name: "Scroll",
     data(){
       return {
-        scroll: null
+        scroll: {}
       }
     },
     props: {
@@ -45,6 +45,12 @@
       pullUpLoad: {
         type: Boolean,
         default: false
+      },
+      data: {
+        type: Array,
+        default(){
+          return []
+        }
       }
     },
     //初始化页面完成后调用的方法

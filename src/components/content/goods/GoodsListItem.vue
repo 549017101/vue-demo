@@ -35,7 +35,7 @@ export default {
      * 根据不同应用场景决定展示图片的数据
      */
     showImgae(){
-      return this.goodsItem.image || this.goodsItem.show.img
+      return this.goodsItem.image || this.goodsItem.img || this.goodsItem.show.img
     }
   },
   methods: {

@@ -6,16 +6,22 @@
       <router-view/>
     </keep-alive>
     <main-tab-bar/>
+    <icon></icon>
+    <svg-icon></svg-icon>
 	</div>
 </template>
 
 <script>
   import MainTabBar from "@/components/content/mainTabbar/MainTabBar";
+  import Icon from "@/components/content/Icon/Icon";
+  import SvgIcon from "@/components/content/Icon/svg";
 
   export default {
     name: "App",
     components:{
-      MainTabBar
+      MainTabBar,
+      Icon,
+      SvgIcon
     }
   };
 </script>
@@ -27,5 +33,9 @@
   * {
     /*使用fastclick时,需要用这个属性,否则谷歌浏览器会报错*/
     touch-action: none;
+  }
+
+  #app {
+    position: relative;
   }
 </style>

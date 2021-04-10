@@ -6,6 +6,7 @@
  */
 
 import {debounce} from "@/common/utils";
+import {POP, NEW, SELL} from "@/common/const"
 import BackTop from "@/components/content/backTop/BackTop";
 
 /**
@@ -49,6 +50,33 @@ export const backTopMixin = {
     backTopClick(){
       //scrollToPage()是 betterScroll中的一个方法,前两个参数表示要返回到的坐标,第三个参数是在多少毫秒内完成
       this.$refs.scroll.scrollToPage(0,0,1500)
+    }
+  }
+}
+
+/**
+ * 分类页面tabControl的混入
+ */
+export const tabControlMixin = {
+  data: function () {
+    return {
+      currentType: POP
+    }
+  },
+  methods: {
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = POP
+          break
+        case 1:
+          this.currentType = NEW
+          break
+        case 2:
+          this.currentType = SELL
+          break
+      }
+      console.log(this.currentType);
     }
   }
 }

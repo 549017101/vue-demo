@@ -1,5 +1,5 @@
 /**
- * 将Toast组件配置成插件
+ * 将Toast组件(提示框)配置成插件
  * Author: pxz
  * Email: buffll@foxmail.com
  * 2021-04-07 19:19
