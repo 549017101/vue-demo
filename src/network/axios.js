@@ -4,8 +4,9 @@ import qs from 'qs'
 export default function axios(option) {
 	return new Promise((resolve, reject) => {
 		// 1.创建axios的实例
+    //最新接口地址：baseURL = "http://152.136.185.210:7878/api/hy66"
 		const instance = originAxios.create({
-      baseURL: 'http://152.136.185.210:7878/api/m5',
+      baseURL: 'http://152.136.185.210:7878/api/hy66',
       timeout: 5000
 		});
 
